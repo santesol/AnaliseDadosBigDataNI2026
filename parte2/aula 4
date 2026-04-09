@@ -1,0 +1,22 @@
+import mysql.connector
+
+def obter_dados_do_banco(query):
+    try:
+        conexao = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="vendas_online"
+        )
+        cursor = conexao.cursor()
+        cursor.execute(query)
+        resultados = cursor.fetchall()
+        return resultados
+    except mysql.connector.Error as erro:
+        print(f"Erro ao conectar ao MySQL: {erro}")
+    return None
+
+# Usando a função
+query_produtos = "SELECT * FROM produtos WHERE preco > 100"
+dados_filtrados = obter_dados_do_banco(query_produtos)
+print(dados_filtrados)
