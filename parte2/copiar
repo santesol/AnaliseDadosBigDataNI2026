@@ -1,0 +1,7 @@
+query_produtos = "SELECT * FROM produtos"
+df_produtos = pd.DataFrame(obter_dados_do_banco(query_produtos), columns=['id_produto', 'nome_produto', 'categoria','preco','estoque'])
+precos_array = df_produtos['preco'].to_numpy()
+print(precos_array)
+
+precos_array_final = np.array(precos_array).astype(float)
+print(precos_array_final)
