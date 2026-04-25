@@ -1,0 +1,12 @@
+import pandas as pd
+
+df_adesao  = pd.read_csv('transacoes-adesao.csv',sep=';', encoding='latin1')
+df_individual = pd.read_csv('transacoes-individual.csv',sep=';',encoding='latin1')
+print(df_individual)
+
+
+
+# linhas_corrigidas = [36]
+# with open('transacoes-adesao.csv', 'r', encoding='latin1') as file:
+#     for linha in file:
+#         partes = linha.strip().split('/')
