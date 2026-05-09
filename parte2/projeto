@@ -1,0 +1,11 @@
+create database transacaoindividual;
+use transacaoindividual;
+
+
+CREATE TABLE dispesa (
+contribuinte varchar(100) primary key not null ,
+CNPJ decimal(10,3),
+dividat decimal(10,3),
+reducao decimal(10,3),
+dividar decimal(10,3)
+);
