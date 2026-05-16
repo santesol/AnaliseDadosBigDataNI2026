@@ -1,0 +1,84 @@
+
+import mysql.connector
+
+def obter_dados_do_banco(query):
+    try:
+        conexao = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="transacaoindividual"
+        )
+        cursor = conexao.cursor()
+        cursor.execute(query)
+        resultados = cursor.fetchall()
+        return resultados
+    except mysql.connector.Error as erro:
+        print(f"Erro ao conectar ao MySQL: {erro}")
+        return None
+    finally:
+        if 'conexao' in locals() and conexao.is_connected():
+            cursor.close()
+            conexao.close()
+
+tabela = "despesa"
+coluna_agrupadora = "contribuinte"
+
+query_estatistica = f"""
+SELECT 
+    {coluna_agrupadora},
+    ROUND(SUM(dividat), 2)  AS total_divida,
+    ROUND(SUM(reducao), 2)  AS total_poupado,
+    ROUND(SUM(dividar), 2)  AS total_restante,
+    ROUND(AVG(dividat), 2)  AS media_por_lancamento,
+    COUNT(*)                AS qtd_registros
+FROM {tabela}
+GROUP BY {coluna_agrupadora}
+ORDER BY total_divida DESC;
+"""
+query_clean = (
+    "SELECT contribuinte, "
+    "SUM(dividat) - SUM(reducao) AS saldo_real, " 
+    "AVG(dividar) AS media_restante "
+    "FROM despesa "
+    "GROUP BY contribuinte "
+    "HAVING SUM(dividar) > 0;" 
+)
+
+x=obter_dados_do_banco(query_clean)
+print(x)
+
+mysql
+
+
+CREATE DATABASE transacaoindividual;
+USE transacaoindividual;
+
+CREATE TABLE despesa (
+    contribuinte VARCHAR(100) PRIMARY KEY NOT NULL,
+    cnpj VARCHAR(14), 
+    dividat DECIMAL(15,2), 
+    reducao DECIMAL(15,2),
+    dividar DECIMAL(15,2)
+);
+CREATE DATABASE transacaoadsao;
+USE transacaoadsao;
+
+CREATE TABLE Sheet1 (
+    cnpj VARCHAR(18), 
+    modalidade VARCHAR(100), 
+    data_edital DATE, 
+    divida_s_r DECIMAL(15,2),
+    reducao DECIMAL(15,2),
+    crd_pf DECIMAL(15,2),
+    crd_pf_t DECIMAL(15,2),
+    bcn_pro DECIMAL(15,2),
+    bcn DECIMAL(15,2),
+    parcelas INT
+);
+
+
+SELECT cnpj FROM transacaoindividual.despesa;
+SELECT dividat FROM transacaoindividual.despesa;
+SELECT reducao FROM transacaoindividual.despesa;
+SELECT dividar FROM transacaoindividual.despesa;
