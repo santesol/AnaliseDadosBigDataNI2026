@@ -9,3 +9,360 @@ dividat decimal(10,3),
 reducao decimal(10,3),
 dividar decimal(10,3)
 );
+
+
+
+GRÁFICO DE BARRAS
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+dados = {
+    "contribuinte": [
+        "GRUPO LATASA",
+        "GRUPO MARABRAZ",
+        "GRUPO GETRONICS",
+        "USINA ESTER",
+        "GAS VERDE S.A",
+        "ELISEU KOPP & CIA LTDA",
+        "AZUL LINHAS AÉREAS",
+        "GOL LINHAS AÉREAS",
+    ],
+    "cnpj": [
+        "00.148.025.0001.37",
+        "03.000.484.0001.67",
+        "02.267.071.0001.80",
+        "60.892.098.0001.60",
+        "11.131.464.0001.53",
+        "93.315.190.0001.17",
+        "09.296.295.0001.60",
+        "07.575.651.0001.59",
+    ],
+    "dividat": [
+        1882182246.00,
+        215724556863.00,
+        186116205.00,
+        24815561.00,
+        133410199.00,
+        36304907.00,
+        771648529.00,
+        3378999859.00,
+    ],  # Dívida Total
+    "reducao": [
+        1122820054.00,
+        1377980889.00,
+        119705057.00,
+        15692537.00,
+        86702702.00,
+        23287285.00,
+        376847649.00,
+        1751886059.00,
+    ],  # Redução
+    "dividar": [
+        759362192.00,
+        779264680.00,
+        66411148.00,
+        9123023.00,
+        46707497.00,
+        13017622.00,
+        394800880.00,
+        1627113800.00,
+    ],  # Dívida Restante
+}
+
+df = pd.DataFrame(dados)
+
+# Configuração do tema visual
+sns.set_theme(style="whitegrid")
+
+
+fig, ax = plt.subplots(figsize=(12, 7))
+
+X = np.arange(len(df["contribuinte"]))
+largura_barra = 0.35
+
+# cores do Seaborn
+cor_divida_total = sns.color_palette("Blues_r")[0]
+cor_divida_restante = sns.color_palette("Blues_r")[2]
+
+# Criação das barras
+barra1 = ax.bar(
+    X - largura_barra / 2,
+    df["dividat"],
+    largura_barra,
+    label="Dívida Total",
+    color=cor_divida_total,
+)
+barra2 = ax.bar(
+    X + largura_barra / 2,
+    df["dividar"],
+    largura_barra,
+    label="Dívida Restante",
+    color=cor_divida_restante,
+)
+
+
+ax.set_title(
+    "Comparativo de Dívidas por Contribuinte", fontsize=14, fontweight="bold", pad=15
+)
+ax.set_xlabel("Contribuinte", fontsize=12, labelpad=15)
+ax.set_ylabel("Valor (R$)", fontsize=12)
+
+
+ax.set_xticks(X)
+ax.set_xticklabels(df["contribuinte"], rotation=45, ha="right", fontsize=10)
+
+ax.legend()
+
+
+
+ax.set_yscale("log")
+
+
+
+def formatar_real(val, pos):
+    if val >= 1e9:
+        return f"R$ {val/1e9:,.1f} Bi".replace(".", ",")
+    elif val >= 1e6:
+        return f"R$ {val/1e6:,.1f} Mi".replace(".", ",")
+    else:
+        return f"R$ {val:,.2f}".replace(",", "v").replace(".", ",").replace("v", ".")
+
+
+ax.yaxis.set_major_formatter(plt.FuncFormatter(formatar_real))
+
+
+plt.tight_layout()
+
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+HISTOGRAMA
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+# dados originais
+dados = {
+    "contribuinte": [
+        "GRUPO LATASA",
+        "GRUPO MARABRAZ",
+        "GRUPO GETRONICS",
+        "USINA ESTER",
+        "GAS VERDE S.A",
+        "ELISEU KOPP & CIA LTDA",
+        "AZUL LINHAS AÉREAS",
+        "GOL LINHAS AÉREAS",
+    ],
+    "cnpj": [
+        "00.148.025.0001.37",
+        "03.000.484.0001.67",
+        "02.267.071.0001.80",
+        "60.892.098.0001.60",
+        "11.131.464.0001.53",
+        "93.315.190.0001.17",
+        "09.296.295.0001.60",
+        "07.575.651.0001.59",
+    ],
+    "dividat": [
+        1882182246.00,
+        215724556863.00,
+        186116205.00,
+        24815561.00,
+        133410199.00,
+        36304907.00,
+        771648529.00,
+        3378999859.00,
+    ],
+    "reducao": [
+        1122820054.00,
+        1377980889.00,
+        119705057.00,
+        15692537.00,
+        86702702.00,
+        23287285.00,
+        376847649.00,
+        1751886059.00,
+    ],
+    "dividar": [
+        759362192.00,
+        779264680.00,
+        66411148.00,
+        9123023.00,
+        46707497.00,
+        13017622.00,
+        394800880.00,
+        1627113800.00,
+    ],
+}
+
+df = pd.DataFrame(dados)
+
+
+df_filtrado = df[df["contribuinte"] != "GRUPO MARABRAZ"]
+
+#   estilo visual
+sns.set_theme(style="whitegrid")
+fig, ax = plt.subplots(figsize=(10, 6))
+
+# Histograma com a coluna 'reducao'
+# 4 faixas (bins) de valores de redução
+n, bins, patches = ax.hist(
+    df_filtrado["reducao"],
+    bins=4,
+    color=sns.color_palette("Blues_r")[1],
+    edgecolor="black",
+)
+
+# Customizando 
+ax.set_title(
+    "Distribuição do Valor de Redução das Dívidas\n(Excluindo Grupo Marabraz)",
+    fontsize=14,
+    fontweight="bold",
+    pad=15,
+)
+ax.set_xlabel("Faixas de Valor de Redução (R$)", fontsize=12)
+ax.set_ylabel("Quantidade de Empresas", fontsize=12)
+
+# Ajustando as marcações do eixo X com os valores das faixas
+ax.set_xticks(bins)
+
+
+
+def formatar_eixo_x(val, pos):
+    if val >= 1e9:
+        return f"{val/1e9:,.1f} Bi".replace(".", ",")
+    elif val >= 1e6:
+        return f"{val/1e6:,.0f} Mi".replace(".", ",")
+    else:
+        return f"{val:,.0f}"
+
+
+ax.xaxis.set_major_formatter(plt.FuncFormatter(formatar_eixo_x))
+
+plt.tight_layout()
+plt.show()
+
+
+
+BOXPLOT
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+#dados originais
+dados = {
+    "contribuinte": [
+        "GRUPO LATASA",
+        "GRUPO MARABRAZ",
+        "GRUPO GETRONICS",
+        "USINA ESTER",
+        "GAS VERDE S.A",
+        "ELISEU KOPP & CIA LTDA",
+        "AZUL LINHAS AÉREAS",
+        "GOL LINHAS AÉREAS",
+    ],
+    "cnpj": [
+        "00.148.025.0001.37",
+        "03.000.484.0001.67",
+        "02.267.071.0001.80",
+        "60.892.098.0001.60",
+        "11.131.464.0001.53",
+        "93.315.190.0001.17",
+        "09.296.295.0001.60",
+        "07.575.651.0001.59",
+    ],
+    "dividat": [
+        1882182246.00,
+        215724556863.00,
+        186116205.00,
+        24815561.00,
+        133410199.00,
+        36304907.00,
+        771648529.00,
+        3378999859.00,
+    ],
+    "reducao": [
+        1122820054.00,
+        1377980889.00,
+        119705057.00,
+        15692537.00,
+        86702702.00,
+        23287285.00,
+        376847649.00,
+        1751886059.00,
+    ],
+    "dividar": [
+        759362192.00,
+        779264680.00,
+        66411148.00,
+        9123023.00,
+        46707497.00,
+        13017622.00,
+        394800880.00,
+        1627113800.00,
+    ],
+}
+
+df = pd.DataFrame(dados)
+
+# Configurando o estilo visual
+sns.set_theme(style="whitegrid")
+fig, ax = plt.subplots(figsize=(6, 8))  # Formato mais vertical para o Boxplot
+
+# Passamos a coluna 'reducao' para o eixo Y para ele ficar em pé
+sns.boxplot(
+    y=df["reducao"],
+    color=sns.color_palette("Blues")[2],
+    width=0.4,
+    linewidth=2,
+    ax=ax,
+)
+
+# Adicionando os pontos das empresas por cima (  ajuda a ver onde cada uma está)
+sns.stripplot(y=df["reducao"], color="black", size=6, jitter=0.05, ax=ax)
+
+# Ajustando os títulos
+ax.set_title(
+    "Análise Estatística (Boxplot)\ndos Valores de Redução",
+    fontsize=14,
+    fontweight="bold",
+    pad=15,
+)
+ax.set_ylabel("Valor da Redução (R$)", fontsize=12)
+
+
+# Função para formatar o eixo Y em Milhões/Bilhões
+def formatar_real(val, pos):
+    if val >= 1e9:
+        return f"R$ {val/1e9:,.1f} Bi".replace(".", ",")
+    elif val >= 1e6:
+        return f"R$ {val/1e6:,.0f} Mi".replace(".", ",")
+    else:
+        return f"R$ {val:,.2f}".replace(",", "v").replace(".", ",").replace("v", ".")
+
+
+ax.yaxis.set_major_formatter(plt.FuncFormatter(formatar_real))
+
+plt.tight_layout()
+plt.show()
